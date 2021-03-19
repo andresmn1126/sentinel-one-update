@@ -7,10 +7,10 @@ api_token = "ApiToken " + getenv('SENTINEL_ONE_API')
 headers = {'Authorization': api_token}
 
 
-def get_os_package(os_type):
+def get_os_package(os_type, pkg_type):
     url = 'https://usea1-007.sentinelone.net/web/api/v2.1/update/agent/packages'
     res = requests.get(url, headers=headers, params={'limit': 1000}).json()['data']
-    packages = [i for i in res if i['osType'] == os_type and i['status'] == 'ga' and i['fileExtension'] != '.exe']
+    packages = [i for i in res if i['osType'] == os_type and i['status'] == 'ga' and i['fileExtension'] == pkg_type]
     sorted_packages = sorted(packages, key=itemgetter('version'), reverse=True)
     return sorted_packages[0]
 
@@ -41,8 +41,8 @@ def update_agents(agents, ver_id):
 
 
 def main():
-    win_id = get_os_package('windows')
-    mac_id = get_os_package('macos')
+    win_id = get_os_package('windows', '.exe')
+    mac_id = get_os_package('macos', '.pkg')
     win_agents = get_outdated_agents('windows', win_id['version'])
     mac_agents = get_outdated_agents('macos', mac_id['version'])
     update_agents(win_agents, win_id['id'])
