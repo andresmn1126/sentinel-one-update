@@ -33,7 +33,8 @@ def update_agents(agents, ver_id):
     url = 'https://usea1-007.sentinelone.net/web/api/v2.1/agents/actions/update-software'
     for a in agents:
         try:
-            update = requests.post(url, data={'packageId': ver_id}, filter={'uuid': a['uuid']})
+            update = requests.post(url, headers=headers, json={'data': {'packageId': ver_id, 'isScheduled': False}, 'filter': {'uuid': a['uuid']}})
+            print(f"Update on {a['computerName']} under {a['siteName']} successfully triggered")
         except:
             print(update.status_code)
 
@@ -49,10 +50,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
