@@ -42,9 +42,9 @@ def update_agents(agents, ver_id):
 
 
 def main():
-    os_types = ['windows', 'macos']
+    os_types = ('windows', 'macos')
     winid, macid = map(get_os_package, os_types)
-    winagents, macagents = map(get_outdated_agents, os_types, [winid['version'], macid['version']])
+    winagents, macagents = map(get_outdated_agents, os_types, (winid['version'], macid['version']))
     update_agents(winagents, winid['id'])
     update_agents(macagents, macid['id'])
 
