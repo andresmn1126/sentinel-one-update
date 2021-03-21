@@ -16,16 +16,15 @@ def get_os_package(os_type):
 
 
 def get_outdated_agents(os_type, ver):
+    s = requests.session()
     url = 'https://usea1-007.sentinelone.net/web/api/v2.1/agents'
-    res = requests.get(url, headers=headers, params={'limit': 1000}).json()
-    agents = []
-    ids = [a for a in res['data'] if version.parse(a['agentVersion']) < version.parse(ver)]
-    agents.extend(ids)
+    res = s.get(url, headers=headers, params={'limit': 1000}).json()
+    agents = [a for a in res['data'] if version.parse(a['agentVersion']) < version.parse(ver)]
     while res['pagination']['nextCursor']:
         next_cursor = res['pagination']['nextCursor']
-        res = requests.get(url, headers=headers, params={'cursor': next_cursor, 'limit': 1000}).json()
-        ids = [a for a in res['data'] if a['osType'] == os_type and version.parse(a['agentVersion']) < version.parse(ver)]
-        agents.extend(ids)
+        res = s.get(url, headers=headers, params={'cursor': next_cursor, 'limit': 1000}).json()
+        more = [a for a in res['data'] if a['osType'] == os_type and version.parse(a['agentVersion']) < version.parse(ver)]
+        agents.extend(more)
     return agents
 
 
